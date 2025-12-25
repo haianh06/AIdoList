@@ -1,0 +1,62 @@
+# 1. GLOBAL & SYSTEM (OS, IDE)
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 2. SECURITY (CRITICAL)
+.env
+.env.local
+.env.*.local
+.env.development
+.env.test
+.env.production
+!.env.example
+
+# Key, Certs
+*.pem
+*.key
+*.pub
+
+# 3. NODE.JS 
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# 4. FRONTEND (Next.js)
+.next/
+out/
+build/
+dist/
+.vercel/
+*.tsbuildinfo
+next-env.d.ts
+
+# 5. BACKEND (Node/Prisma)
+*.sqlite
+*.sqlite-journal
+*.db
+
+# 6. AI SERVICE (Python)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+.pytest_cache/
+.coverage
+htmlcov/
+*.gguf
+*.bin
+
+# 7. DOCKER & DATA
+postgres_data/
+docker-compose.override.yml

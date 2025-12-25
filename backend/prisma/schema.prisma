@@ -1,0 +1,60 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            Int         @id @default(autoincrement())
+  username      String      @unique
+  email         String      @unique
+  password_hash String
+  created_at    DateTime    @default(now())
+  events        Event[]
+  audit_logs    AuditLog[]
+  @@map("users")
+}
+
+model Event {
+  id               Int      @id @default(autoincrement())
+  title            String
+  description      String?
+  location         String?
+  start_time       DateTime
+  end_time         DateTime
+  category         String   @default("default")
+  reminder         String   @default("none")
+  recurrence       String   @default("none")
+  recurrence_count Int      @default(10)
+  exceptions       EventException[] 
+  user_id          Int
+  user             User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  created_at       DateTime @default(now())
+  @@index([user_id, start_time, end_time])
+  @@map("events")
+}
+
+model EventException {
+  id        Int      @id @default(autoincrement())
+  event_id  Int
+  date      DateTime 
+  event     Event    @relation(fields: [event_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now())
+  @@unique([event_id, date]) 
+  @@map("event_exceptions")
+}
+
+model AuditLog {
+  id         Int      @id @default(autoincrement())
+  action     String
+  details    String?
+  timestamp  DateTime @default(now())
+  user_agent String?
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  @@map("audit_logs")
+}
