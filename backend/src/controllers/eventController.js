@@ -1,4 +1,4 @@
-const prisma = require('../config/db');
+const prisma = require('../config/db_prisma');
 
 const getEvents = async (req, res) => {
   try {

@@ -33,12 +33,14 @@ export default function ChatWidget() {
     if (!input.trim() || isLoading) return;
 
     const userMsg: Message = { role: 'user', content: input };
+    const newHistory = [...messages, userMsg];
     setMessages(prev => [...prev, userMsg]);
     setInput('');
     setIsLoading(true);
 
     try {
-      const data = await chatWithAI(userMsg.content);
+      const historyToSend = messages.map(m => ({ role: m.role, content: m.content }));
+      const data = await chatWithAI(userMsg.content, historyToSend);
       
       let aiContent = "Tôi không hiểu yêu cầu.";
       let createdEvents = [];
@@ -89,7 +91,12 @@ export default function ChatWidget() {
           </div>
 
           {/* Messages Body */}
-          <div className="flex-1 overflow-y-[scroll] p-[15px] space-y-[10px] bg-[#ffffff]">
+          <div className="flex-1 overflow-y-auto p-[15px] space-y-[10px] bg-[#ffffff] 
+    [&::-webkit-scrollbar]:w-1.5 
+    [&::-webkit-scrollbar-track]:bg-transparent 
+    [&::-webkit-scrollbar-thumb]:bg-gray-200 
+    [&::-webkit-scrollbar-thumb]:rounded-full 
+    hover:[&::-webkit-scrollbar-thumb]:bg-gray-300">
             {messages.map((msg, idx) => (
               <div key={idx} className={`flex flex-col ${msg.role === 'user' ? 'items-end' : 'items-start'}`}>
                 {/* Text Bubble */}
@@ -103,11 +110,11 @@ export default function ChatWidget() {
                   {msg.content}
                 </div>
 
-                {/* Event Cards (Nếu có) */}
+                {/* Event Cards */}
                 {msg.events && msg.events.length > 0 && (
                   <div className="mt-[10px] space-y-[10px] w-[85%]">
-                    {msg.events.map((ev: any) => (
-                      <div key={ev.id} className="bg-[#fff2f2] p-[10px] rounded-[15px] border border-[#58DC82] shadow-[0_0_10px_rgba(0,0,0,0.1)] flex items-start gap-[10px]">
+                    {msg.events.map((ev: any, index: number) => (
+                      <div key={ev.id || index} className="bg-[#fff2f2] p-[10px] rounded-[15px] border border-[#58DC82] shadow-[0_0_10px_rgba(0,0,0,0.1)] flex items-start gap-[10px]">
                         <div className="bg-[#58DC82] p-[10px] rounded-[5px] shrink-[0]">
                           <Calendar size={16} />
                         </div>
@@ -132,7 +139,7 @@ export default function ChatWidget() {
             {isLoading && (
               <div className="flex items-center gap-[5px] text-[#3b82f6] text-[15px] ml-[10px]">
                 <Loader2 size={12} className="animate-spin"/>
-                AI đang suy nghĩ...
+                AI is thinking
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -161,7 +168,7 @@ export default function ChatWidget() {
         </div>
       )}
 
-      {/* --- TOGGLE BUTTON (Icon tròn góc màn hình) --- */}
+      {/* TOGGLE BUTTON */}
       <button 
         onClick={() => setIsOpen(!isOpen)}
         className={`w-14 h-14 rounded-full shadow-xl flex items-center justify-center transition-all duration-300 transform hover:scale-110 active:scale-95 ${

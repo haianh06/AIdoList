@@ -10,9 +10,9 @@ const api = axios.create({
   timeout: 120000, 
 });
 
-export const chatWithAI = async (message: string) => {
+export const chatWithAI = async (message: string, history: any[] = []) => {
   try {
-    const response = await api.post('/ai/chat', { message });
+    const response = await api.post('/ai/chat', { message, history });
     return response.data;
   } catch (error: any) {
     console.error("API Call Failed:", error);
@@ -20,15 +20,12 @@ export const chatWithAI = async (message: string) => {
   }
 };
 
-// 1. Gửi đi: Gắn Token
+// 1. Gắn Token
 api.interceptors.request.use(
   (config) => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
-      
-      // --- DEBUG: Bật F12 Console lên xem dòng này có hiện token không ---
-      console.log("Interceptor đang chạy. Token lấy được là:", token); 
-      
+  
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
       }
@@ -49,7 +46,7 @@ api.interceptors.response.use(
       if (typeof window !== 'undefined') {
         localStorage.removeItem('token');
         localStorage.removeItem('user');
-        // Đá về trang login
+        // Về trang login
         window.location.href = '/login';
       }
     }

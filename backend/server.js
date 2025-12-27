@@ -1,13 +1,11 @@
 require('dotenv').config();
 
-//console.log(">> CHECK ENV LOADED:", process.env.MAIL_HOST ? "OK" : "FAILED");
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 
 const aiRoutes = require('./src/routes/aiRoutes');
-const aiController = require('./src/controllers/aiController');
 const authRoutes = require('./src/routes/authRoutes');
 const eventRoutes = require('./src/routes/eventRoutes');
 
@@ -24,7 +22,6 @@ app.use(morgan('dev'));
 app.use('/api/ai', aiRoutes);
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
-//app.post('/api/test-ai', aiController.sendToAI);
 
 app.get('/health', (req, res) => {
   res.json({ status: "ok", message: "Backend AIdoList (Node.js) is running!" });
